@@ -174,7 +174,7 @@
           },
           "vsrocq.goals.maxDepth": {
             "type": "number",
-            "default": 17,
+            "default": 200,
             "markdownDescription": "The maximum depth in goals over which an ellipsis will be displayed (instead of the sub-terms)."
           }
         }
@@ -991,6 +991,7 @@
   },
   "devDependencies": {
     "@types/glob": "^8.0.0",
+    "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
     "@types/tmp": "^0.2.3",
