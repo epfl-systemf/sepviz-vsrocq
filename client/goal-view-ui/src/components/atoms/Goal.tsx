@@ -1,7 +1,8 @@
-import React, {FunctionComponent, MouseEvent, KeyboardEvent} from 'react';
+import React, {FunctionComponent, MouseEvent, KeyboardEvent, useRef, useState, useEffect} from 'react';
 
 import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
+import SepvizDisplay from '../sepviz/display';
 
 type GoalProps = {
     goal: PpString,
@@ -12,6 +13,14 @@ type GoalProps = {
 const goal : FunctionComponent<GoalProps> = (props) => {
     
     const {goal, maxDepth, setHelpMessage} = props;
+    const ppRef = useRef<HTMLDivElement>(null);
+    const [goalText, setGoalText] = useState<string>('');
+
+    useEffect(() => {
+        if (ppRef.current) {
+            setGoalText(ppRef.current.textContent ?? '');
+        }
+    }, [goal, maxDepth]);
 
     return (
         <div 
@@ -27,11 +36,14 @@ const goal : FunctionComponent<GoalProps> = (props) => {
                 }
             }}
         >
-            <PpDisplay 
-                pp={goal}
-                rocqCss={classes}
-                maxDepth={maxDepth}
-            />
+            <div ref={ppRef} style={{display: 'none'}}>
+                <PpDisplay 
+                    pp={goal}
+                    rocqCss={classes}
+                    maxDepth={maxDepth}
+                />
+            </div>
+            <SepvizDisplay goalText={goalText} ppRef={ppRef} />
         </div>
     );
 };

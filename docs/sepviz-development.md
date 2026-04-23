@@ -19,3 +19,11 @@ code . # open vsrocq in the vscode
 Then, open `client/extension.ts`, and press `F5` to compile and run the extension in a new Extension Development Host window.
 From that window, open the project `cfml-examples`. 
 From the command palette, type "Developer: Togger Developer Tools" for the developer tools.
+
+## yarn commands 
+
+Add dependencies:
+```
+yarn add [package]
+yarn add --dev [package]
+``
