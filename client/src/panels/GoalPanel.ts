@@ -3,6 +3,8 @@ import { ProofViewNotification } from '../protocol/types';
 import { getUri } from "../utilities/getUri";
 import { getNonce } from "../utilities/getNonce";
 import Client from "../client";
+import * as fs from 'fs';
+import * as path from 'path';
 
 // /////////////////////////////////////////////////////////////////////////////
 // GOAL VIEW PANEL CODE
@@ -24,6 +26,9 @@ export default class GoalPanel {
   public static currentPv: ProofViewNotification | undefined;
   private readonly _panel: WebviewPanel;
   private _disposables: Disposable[] = [];
+  // For sepviz configuration.
+  private _sepvizConfigWatcher: fs.FSWatcher | undefined;
+  private _sepvizConfigFName: string = 'sepviz.yaml';
 
 
   /**
@@ -103,6 +108,9 @@ export default class GoalPanel {
 
     // Dispose of the current webview panel
     this._panel.dispose();
+
+    // Close sepviz config file watcher
+    this._sepvizConfigWatcher?.close();
 
     // Dispose of all disposables (i.e. commands) for the current webview panel
     while (this._disposables.length) {
@@ -254,6 +262,13 @@ export default class GoalPanel {
         switch (command) {
             case 'openGoalSettings':
                 commands.executeCommand('workbench.action.openSettings', 'vsrocq.goals');
+                break;
+            case 'requestSepvizConfig': 
+                Client.writeToVsrocqChannel('[GoalPanel] Webview requested sepviz config');
+                this._sendSepvizConfig(webview);
+                this._sepvizConfigWatcher?.close();
+                this._watchSepvizConfig(webview);
+                break;
             // Add more switch case statements here as more webview message commands
             // are created within the webview context (i.e. inside media/main.js)
         }
@@ -261,6 +276,43 @@ export default class GoalPanel {
       undefined,
       this._disposables
     );
+  }
+
+  // /////////////////////////////////////////////////////////////////////////////
+  // Loading sepviz configuration
+  //
+  // /////////////////////////////////////////////////////////////////////////////
+
+  private _getSepvizConfigPath(): string | undefined {
+      const folders = workspace.workspaceFolders;
+      if (!folders || folders.length === 0) return undefined;
+      return path.join(folders[0].uri.fsPath, this._sepvizConfigFName); 
+  }
+
+  private _sendSepvizConfig(webview: Webview) {
+    const configPath = this._getSepvizConfigPath();
+    if (!configPath) return;
+
+    if (!fs.existsSync(configPath)) {
+        Client.writeToVsrocqChannel(`[GoalPanel] No ${this._sepvizConfigFName} found, using defaults`);
+        return; 
+    }
+    try {
+        const text = fs.readFileSync(configPath, 'utf-8');
+        webview.postMessage({ command: 'sepvizConfigUpdate', text });
+        Client.writeToVsrocqChannel(`[GoalPanel] Sent ${this._sepvizConfigFName} to webview`);
+    } catch (e) {
+        Client.writeToVsrocqChannel(`[GoalPanel] Failed to read ${this._sepvizConfigFName}: ${e}`);
+    }
+  }
+
+  private _watchSepvizConfig(webview: Webview) {
+    const configPath = this._getSepvizConfigPath();
+    if (!configPath) return;
+    this._sepvizConfigWatcher = fs.watch(configPath, () => {
+        Client.writeToVsrocqChannel(`[GoalPanel] ${this._sepvizConfigFName} changed, reloading`);
+        this._sendSepvizConfig(webview);
+    });
   }
 }
  
