@@ -6,6 +6,10 @@ import {Goal, ProofViewGoals, ProofViewGoalsKey, ProofViewMessage} from './types
 
 import { vscode } from "./utilities/vscode";
 
+import { Render } from './components/sepviz/render';
+import { defaultRenderConfig, readRenderConfig, RenderConfig } from './components/sepviz/config';
+import { isEqual } from 'lodash'; 
+
 const app = () => {
 
   const [goals, setGoals] = useState<ProofViewGoals>(null);
@@ -13,6 +17,8 @@ const app = () => {
   const [goalDisplaySetting, setGoalDisplaySetting] = useState<string>("List");
   const [goalDepth, setGoalDepth] = useState<number>(10);
   const [helpMessage, setHelpMessage] = useState<string>("");
+  const [sepvizConfig, setSepvizConfig] = useState<RenderConfig>(defaultRenderConfig);
+  const [sepvizRender, setSepvizRender] = useState<Render>(() => new Render(defaultRenderConfig()));
 
   const handleMessage = useCallback ((msg: any) => {
     switch (msg.data.command) {
@@ -48,16 +54,27 @@ const app = () => {
             setMessages([]);
             setGoals(null);
             break;
+        case 'sepvizConfigUpdate': 
+            try {
+                const newConfig = readRenderConfig(msg.data.text);
+                if (isEqual(sepvizConfig, newConfig)) return;
+                setSepvizConfig(newConfig);
+                setSepvizRender(new Render(newConfig));
+            } catch (e) {
+                console.error('sepviz: failed to parse config and setup new render ', e);
+            }
+            break;
     }
   }, []);
 
     useEffect(() => {
         window.addEventListener("message", handleMessage);
+        vscode.postMessage({ command: 'requestSepvizConfig' }); 
         return () => {
             window.removeEventListener("message", handleMessage);
         };
     }, [handleMessage]);
-            
+
 
     const collapseGoalHandler = (id: string, key: ProofViewGoalsKey) => {
         const newGoals = goals![key].map(goal => {
@@ -103,6 +120,7 @@ const app = () => {
             helpMessage={helpMessage}
             helpMessageHandler={(message: string) => setHelpMessage(message)}
             toggleContextHandler={toggleContext}
+            sepvizRender={sepvizRender}
         />
     </main>
   );

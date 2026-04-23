@@ -6,6 +6,7 @@ import Separator from '../atoms/Separator';
 
 import classes from './GoalBlock.module.css';
 import { Goal } from '../../types';
+import { Render } from '../sepviz/render';
 
 type GoalBlockProps = {
     goal: Goal
@@ -13,11 +14,12 @@ type GoalBlockProps = {
     maxDepth: number,
     helpMessageHandler: (message: string) => void,
     displayHyps: boolean
+    sepvizRender: Render
 };
 
 const goalBlock: FunctionComponent<GoalBlockProps> = (props) => {
     
-    const {goal, goalIndicator, maxDepth, displayHyps, helpMessageHandler} = props;
+    const {goal, goalIndicator, maxDepth, displayHyps, helpMessageHandler, sepvizRender} = props;
     const indicator = goalIndicator ? <span className={classes.GoalIndex} >({goalIndicator})</span> : null;
     const hyps = displayHyps ? <HypothesesBlock hypotheses={goal.hypotheses} maxDepth={maxDepth}/> : null;
 
@@ -28,7 +30,7 @@ const goalBlock: FunctionComponent<GoalBlockProps> = (props) => {
                 {indicator} 
                 <Separator />
             </div>
-            <GoalComponent goal={goal.goal} maxDepth={maxDepth} setHelpMessage={helpMessageHandler}/>
+            <GoalComponent goal={goal.goal} maxDepth={maxDepth} setHelpMessage={helpMessageHandler} sepvizRender={sepvizRender}/>
         </div>
     );
 };

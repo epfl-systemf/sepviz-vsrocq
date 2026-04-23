@@ -9,16 +9,18 @@ import GoalBlock from '../molecules/GoalBlock';
 import { Goal } from '../../types';
 
 import classes from './GoalTabs.module.css';
+import { Render } from '../sepviz/render';
 
 type GoalSectionProps = {
     goals: Goal[];
     maxDepth: number;
     helpMessageHandler: (message: string) => void;
+    sepvizRender: Render;
 };
 
 const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
     
-    const {goals, maxDepth, helpMessageHandler} = props;
+    const {goals, maxDepth, helpMessageHandler, sepvizRender} = props;
     const goalRefs = useRef<Array<HTMLDivElement | null>>([]);
     useLayoutEffect(() => {
         goalRefs.current = goalRefs.current.slice(0, goals.length);
@@ -51,7 +53,7 @@ const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
         const viewId = "view-" + index;
         return (
             <VSCodePanelView id={viewId} key={viewId}>
-                <GoalBlock goal={goal} goalIndicator={index + 1 + " / " + goals.length} maxDepth={maxDepth} helpMessageHandler={helpMessageHandler} displayHyps={true}/>
+                <GoalBlock goal={goal} goalIndicator={index + 1 + " / " + goals.length} maxDepth={maxDepth} helpMessageHandler={helpMessageHandler} displayHyps={true} sepvizRender={sepvizRender}/>
                 <div ref={el => goalRefs.current[index] = el}/>
             </VSCodePanelView>
         );

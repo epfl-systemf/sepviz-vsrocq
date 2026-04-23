@@ -19,6 +19,8 @@ import { ProofViewGoals, ProofViewGoalsKey, ProofViewMessage } from '../../types
 import classes from './GoalPage.module.css';
 import { VscPass, VscWarning } from 'react-icons/vsc';
 
+import { Render } from '../sepviz/render';
+
 type ProofViewPageProps = {
     goals: ProofViewGoals;
     messages: ProofViewMessage[];
@@ -29,6 +31,7 @@ type ProofViewPageProps = {
     settingsClickHandler: () => void;
     helpMessage: string;
     helpMessageHandler: (message: string) => void;
+    sepvizRender: Render;
 };
 
 const proofViewPage: FunctionComponent<ProofViewPageProps> = (props) => {
@@ -36,7 +39,7 @@ const proofViewPage: FunctionComponent<ProofViewPageProps> = (props) => {
     const {goals, messages, displaySetting, 
             collapseGoalHandler, maxDepth, settingsClickHandler, 
             helpMessage, helpMessageHandler,
-            toggleContextHandler,
+            toggleContextHandler, sepvizRender
         } = props;
 
     const renderGoals = () => {
@@ -70,6 +73,7 @@ const proofViewPage: FunctionComponent<ProofViewPageProps> = (props) => {
                     }
                     maxDepth={maxDepth}
                     helpMessageHandler={helpMessageHandler}
+                    sepvizRender={sepvizRender}
                 /> 
             </VSCodePanelView>,
             <VSCodePanelView className={classes.View}> 
@@ -82,6 +86,7 @@ const proofViewPage: FunctionComponent<ProofViewPageProps> = (props) => {
                     emptyMessage='There are no shelved goals'
                     maxDepth={maxDepth}
                     helpMessageHandler={helpMessageHandler}
+                    sepvizRender={sepvizRender}
                 /> 
             </VSCodePanelView>,
             <VSCodePanelView className={classes.View}> 
@@ -94,6 +99,7 @@ const proofViewPage: FunctionComponent<ProofViewPageProps> = (props) => {
                     emptyMessage='There are no given up goals'
                     maxDepth={maxDepth}
                     helpMessageHandler={helpMessageHandler}
+                    sepvizRender={sepvizRender}
                 /> 
             </VSCodePanelView>
         ];

@@ -4,18 +4,20 @@ import CollapsibleGoalBlock from '../molecules/CollapsibleGoalBlock';
 import { CollapsibleGoal } from '../../types';
 
 import classes from './GoalCollapsibles.module.css';
+import { Render } from '../sepviz/render';
 
 type GoalSectionProps = {
     goals: CollapsibleGoal[],
     collapseGoalHandler: (id: string) => void,
     toggleContextHandler: (id: string) => void,
     maxDepth: number,
-    helpMessageHandler: (message: string) => void
+    helpMessageHandler: (message: string) => void,
+    sepvizRender: Render
 };
 
 const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
     
-    const {goals, collapseGoalHandler, toggleContextHandler, maxDepth, helpMessageHandler} = props;
+    const {goals, collapseGoalHandler, toggleContextHandler, maxDepth, helpMessageHandler, sepvizRender} = props;
     const firstGoalRef = useRef<HTMLDivElement>(null);
     
     useEffect(() => {
@@ -43,6 +45,7 @@ const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
                         toggleContextHandler={toggleContextHandler}
                         helpMessageHandler={helpMessageHandler}
                         maxDepth={maxDepth}
+                        sepvizRender={sepvizRender}
                     />
                     <div ref={firstGoalRef}/>
                 </>
@@ -56,6 +59,7 @@ const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
                 toggleContextHandler={toggleContextHandler}
                 maxDepth={maxDepth} 
                 helpMessageHandler={helpMessageHandler}
+                sepvizRender={sepvizRender}
             />
         );
     });

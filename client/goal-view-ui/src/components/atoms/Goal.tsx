@@ -3,16 +3,18 @@ import React, {FunctionComponent, MouseEvent, KeyboardEvent, useRef, useState, u
 import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
 import SepvizDisplay from '../sepviz/display';
+import { Render } from '../sepviz/render';
 
 type GoalProps = {
     goal: PpString,
     maxDepth: number,
     setHelpMessage: (message: string) => void;
+    sepvizRender: Render;
 };
 
 const goal : FunctionComponent<GoalProps> = (props) => {
     
-    const {goal, maxDepth, setHelpMessage} = props;
+    const {goal, maxDepth, setHelpMessage, sepvizRender} = props;
     const ppRef = useRef<HTMLDivElement>(null);
     const [goalText, setGoalText] = useState<string>('');
 
@@ -65,7 +67,7 @@ const goal : FunctionComponent<GoalProps> = (props) => {
                     maxDepth={maxDepth}
                 />
             </div>
-            <SepvizDisplay goalText={goalText} ppRef={ppRef} />
+            <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} />
         </div>
     );
 };

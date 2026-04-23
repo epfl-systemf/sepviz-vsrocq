@@ -5,6 +5,7 @@ import { VscEye, VscEyeClosed } from 'react-icons/vsc';
 import GoalBlock from './GoalBlock';
 import Accordion from '../atoms/Accordion';
 import { CollapsibleGoal } from '../../types';
+import { Render } from '../sepviz/render';
 
 type CollapsibleGoalBlockProps = {
     goal: CollapsibleGoal,
@@ -13,12 +14,13 @@ type CollapsibleGoalBlockProps = {
     goalIndex: number,
     goalIndicator: string,
     maxDepth: number,
-    helpMessageHandler: (message: string) => void
+    helpMessageHandler: (message: string) => void,
+    sepvizRender: Render
 };
 
 const collapsibleGoalBlock: FunctionComponent<CollapsibleGoalBlockProps> = (props) => {
     
-    const {goal, goalIndex, goalIndicator, collapseHandler, toggleContextHandler, maxDepth, helpMessageHandler} = props;
+    const {goal, goalIndex, goalIndicator, collapseHandler, toggleContextHandler, maxDepth, helpMessageHandler, sepvizRender} = props;
 
     const secondaryActionIcon = goal.isContextHidden ? <VscEye /> : <VscEyeClosed />;
     const secondaryActionHandler = toggleContextHandler !== undefined ? () => toggleContextHandler(goal.id) : undefined;
@@ -29,7 +31,7 @@ const collapsibleGoalBlock: FunctionComponent<CollapsibleGoalBlockProps> = (prop
             seconaryActionHandler={secondaryActionHandler}
             seconaryActionIcon={secondaryActionIcon}
         >
-            <GoalBlock goal={goal} goalIndicator={goalIndicator} maxDepth={maxDepth} helpMessageHandler={helpMessageHandler} displayHyps={!goal.isContextHidden}/>
+            <GoalBlock goal={goal} goalIndicator={goalIndicator} maxDepth={maxDepth} helpMessageHandler={helpMessageHandler} displayHyps={!goal.isContextHidden} sepvizRender={sepvizRender}/>
         </Accordion>
     );
 

@@ -6,6 +6,7 @@ import EmptyState from '../atoms/EmptyState';
 import { CollapsibleGoal } from '../../types';
 
 import classes from './GoalSection.module.css';
+import { Render } from '../sepviz/render';
 
 type GoalSectionProps = {
     goals: CollapsibleGoal[],
@@ -17,11 +18,12 @@ type GoalSectionProps = {
     unfocusedGoals?: CollapsibleGoal[],
     maxDepth: number;
     helpMessageHandler: (message: string) => void;
+    sepvizRender: Render
 };
 
 const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
     
-    const {goals, collapseGoalHandler, toggleContextHandler, displaySetting, unfocusedGoals, emptyMessage, emptyIcon, maxDepth, helpMessageHandler} = props;
+    const {goals, collapseGoalHandler, toggleContextHandler, displaySetting, unfocusedGoals, emptyMessage, emptyIcon, maxDepth, helpMessageHandler, sepvizRender} = props;
     const emptyMessageRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -50,18 +52,22 @@ const goalSection: FunctionComponent<GoalSectionProps> = (props) => {
             <GoalCollapsibleSection goals={unfocusedGoals} 
                 collapseGoalHandler={collapseGoalHandler}
                 toggleContextHandler={toggleContextHandler}
-                maxDepth={maxDepth} helpMessageHandler={helpMessageHandler} />
+                maxDepth={maxDepth} 
+                helpMessageHandler={helpMessageHandler}
+                sepvizRender={sepvizRender}
+            />
         </div>
         : <>
             <EmptyState message={emptyMessage} icon={emptyIcon} />
             <div ref={emptyMessageRef}/>
           </>
     : displaySetting === 'Tabs' ?
-        <GoalTabSection goals={goals} maxDepth={maxDepth} helpMessageHandler={helpMessageHandler}/>
+        <GoalTabSection goals={goals} maxDepth={maxDepth} helpMessageHandler={helpMessageHandler} sepvizRender={sepvizRender}/>
         : <GoalCollapsibleSection goals={goals} 
             collapseGoalHandler={collapseGoalHandler} 
             maxDepth={maxDepth} helpMessageHandler={helpMessageHandler}
             toggleContextHandler={toggleContextHandler}
+            sepvizRender={sepvizRender}
         />;
 
     return section;

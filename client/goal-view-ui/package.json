@@ -20,7 +20,9 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
+    "@types/d3-ease": "^3.0.2",
     "@types/d3-graphviz": "^2.6.10",
+    "@types/d3-transition": "^3.0.9",
     "@types/js-yaml": "^4.0.9",
     "@types/lodash.merge": "^4.6.9",
     "@types/react": "^17.0.33",

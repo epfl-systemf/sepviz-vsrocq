@@ -1,51 +1,59 @@
-import { FunctionComponent, useRef, useState, useEffect, RefObject } from 'react';
-import { Render } from './render';
-import { defaultRenderConfig, readRenderConfig, RenderConfig } from './config';
-import { isEqual } from 'lodash'; 
+import { FunctionComponent, useRef, useEffect, RefObject } from 'react';
+import { Render, ExtHTMLElement } from './render';
+import { transition } from 'd3-transition';
+import { easeCubicInOut } from 'd3-ease';
 import "./sep.css";
-import { vscode } from '../../utilities/vscode';
 
 interface SepvizDisplayProps {
   goalText: string;
   ppRef: RefObject<HTMLDivElement>;
+  render: Render;
 }
 
-const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef }) => {
+const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef, render }) => {
   const hostRef = useRef<HTMLDivElement>(null);
-  const [config, setConfig] = useState<RenderConfig>(defaultRenderConfig());
-  const [render, setRender] = useState<Render>(new Render(config));
+  const prevDotRef = useRef<string>(''); 
 
-  useEffect(() => {
-    const handler = (event: MessageEvent) => {
-      const msg = event.data;
-      if (msg.command === 'sepvizConfigUpdate') {
-        try {
-          const newConfig = readRenderConfig(msg.text);
-          if (isEqual(config, newConfig)) return;
-          setConfig(newConfig);
-          setRender(new Render(newConfig));
-        } catch (e) {
-          console.error('SepvizDisplay: failed to parse config and setup new render ', e);
-        }
-      }
-    };
-    window.addEventListener('message', handler);
-    vscode.postMessage({ command: 'requestSepvizConfig' });
-
-    return () => window.removeEventListener('message', handler);
-  }, []);
+  function animate(
+    host: HTMLElement,
+    prevDot: string,
+    currDot: string,
+    duration = 2000
+  ) {
+    const svgNode = host.querySelector<ExtHTMLElement>('.sep-svg');
+    const gviz = svgNode?.__graphviz__;
+    if (!svgNode || !gviz) return;
+    gviz
+      .transition(() => transition().duration(0) as any)
+      .renderDot(prevDot)
+      .on('end', () => {
+        gviz
+          .transition(() => transition().duration(duration).ease(easeCubicInOut) as any)
+          .renderDot(currDot)
+          .on('end', () => { svgNode.dot = currDot; });
+    });
+  }
 
   useEffect(() => {
     const host = hostRef.current;
     if (!host || !goalText) return;
     host.innerHTML = ''; 
+
     try {
       render.render(goalText, host, true);
+      const svgNode = host.querySelector<ExtHTMLElement>('.sep-svg');
+      const currDot = svgNode?.dot;
+      const prevDot = prevDotRef.current;
+      if (prevDot && currDot && prevDot !== currDot) {
+        animate(host, prevDot, currDot);
+      }
+      if (currDot) prevDotRef.current = currDot;
     } catch (e) {
       console.error('SepvizDisplay: failed to render, falling back to PpDisplay: ', e);
       const pp = ppRef.current;
       if (pp) {
-        pp.style.display = ''; // FIXME
+        pp.style.visibility = ''; 
+        pp.style.position = ''; 
       } else {
         host.textContent = goalText; 
       }
