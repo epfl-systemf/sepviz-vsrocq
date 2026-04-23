@@ -17,11 +17,27 @@ const goal : FunctionComponent<GoalProps> = (props) => {
     const [goalText, setGoalText] = useState<string>('');
 
     useEffect(() => {
-        if (ppRef.current) {
-            setGoalText(ppRef.current.textContent ?? '');
+        const el = ppRef.current;
+        if (!el) return;
+        const text = el.textContent ?? '';
+        if (text.trim()) {
+            setGoalText(text);
+            return;
         }
+        // important: wait for PpDisplay to finish rendering 
+        const observer = new MutationObserver(() => {
+            const text = el.textContent ?? '';
+            if (text.trim()) {
+                setGoalText(text);
+                observer.disconnect();
+            }
+        });
+        observer.observe(el, { childList: true, subtree: true, characterData: true });
+        return () => observer.disconnect();
     }, [goal, maxDepth]);
 
+
+    // Note: for the ppRef node, using `display: none` instead will result in missing whitespaces in its textContent.
     return (
         <div 
             className={classes.Goal} 
@@ -36,7 +52,13 @@ const goal : FunctionComponent<GoalProps> = (props) => {
                 }
             }}
         >
-            <div ref={ppRef} style={{display: 'none'}}>
+            <div ref={ppRef} style={{
+                visibility: 'hidden', 
+                position: 'absolute',
+                pointerEvents: 'none',
+                top: 0,
+                left: 0,
+            }}> 
                 <PpDisplay 
                     pp={goal}
                     rocqCss={classes}

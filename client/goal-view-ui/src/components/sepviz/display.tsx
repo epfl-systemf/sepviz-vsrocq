@@ -1,6 +1,7 @@
 import { FunctionComponent, useRef, useEffect, RefObject } from 'react';
 import { Render } from './render';
 import { defaultRenderConfig } from './config';
+import "./sep.css";
 
 interface SepvizDisplayProps {
   goalText: string;
