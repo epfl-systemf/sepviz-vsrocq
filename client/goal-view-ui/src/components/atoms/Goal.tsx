@@ -12,6 +12,26 @@ type GoalProps = {
     sepvizRender: Render;
 };
 
+function domToText(el: HTMLElement, charWidthPx: number = 7): string {
+    let res = '';
+    function rec(node: Node) {
+        if (node.nodeType === Node.TEXT_NODE) { res += node.textContent; return; }
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        const elem = node as HTMLElement;
+        if (elem.tagName === 'BR') { res += '\n'; return;}
+        // indentation span
+        if (elem.tagName === 'SPAN' && elem.style.marginLeft) {
+            const px = parseFloat(elem.style.marginLeft);
+            const spaces = Math.round(px / charWidthPx);
+            res += ' '.repeat(spaces);
+            return; 
+        }
+        elem.childNodes.forEach(rec);
+    }
+    el.childNodes.forEach(rec);
+    return res;
+}
+
 const goal : FunctionComponent<GoalProps> = (props) => {
     
     const {goal, maxDepth, setHelpMessage, sepvizRender} = props;
@@ -27,7 +47,8 @@ const goal : FunctionComponent<GoalProps> = (props) => {
         // TODO: is there a better way?
         const timer = setTimeout(() => {
             const tryCapture = () => {
-                const text = el.textContent ?? '';
+                // Note: innerText is not enough because it ignores indentation spans.
+                const text = domToText(el); 
                 if (text.trim()) {
                     setGoalText(text);
                     return true;
@@ -43,7 +64,6 @@ const goal : FunctionComponent<GoalProps> = (props) => {
        return () => clearTimeout(timer);
     }, [goal, maxDepth]);
 
-    // Note: for the ppRef node, using `display: none` instead will result in missing whitespaces in its textContent.
     return (
         <div 
             className={classes.Goal} 
@@ -58,20 +78,20 @@ const goal : FunctionComponent<GoalProps> = (props) => {
                 }
             }}
         >
-            <div ref={ppRef} style={{
-                visibility: 'hidden', 
-                position: 'absolute',
-                pointerEvents: 'none',
-                top: 0,
-                left: 0,
-            }}> 
-                <PpDisplay 
-                    pp={goal}
-                    rocqCss={classes}
-                    maxDepth={maxDepth}
-                />
+            {/* Stack together to hide the PpDisplay (PpDisplay needs to be rendered to have correct indentation.)  */}
+            <div style={{ position: 'relative' }}>
+                <div ref={ppRef}>
+                    <PpDisplay pp={goal} rocqCss={classes} maxDepth={maxDepth} />
+                </div>
+                {goalText && (
+                    <div style={{
+                        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, margin: '-5px', 
+                        background: 'var(--vscode-editor-background)', zIndex: 1,
+                    }}>
+                        <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} />
+                    </div>
+                )}
             </div>
-            <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} />
         </div>
     );
 };
