@@ -14,7 +14,7 @@ const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef,
   const hostRef = useRef<HTMLDivElement>(null);
   const prevDotRef = useRef<string>(''); 
 
-  function animate(
+  async function animate(
     host: HTMLElement,
     prevDot: string,
     currDot: string,
@@ -23,16 +23,20 @@ const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef,
     const svgNode = host.querySelector<ExtHTMLElement>('.sep-svg');
     const gviz = svgNode?.__graphviz__;
     if (!svgNode || !gviz) return;
-    gviz
-      .transition(() => transition().duration(0) as any)
-      .renderDot(prevDot)
-      .on('end', () => {
-        gviz
-          .transition(() => transition().duration(duration).ease(easeCubicInOut) as any)
-          .renderDot(currDot)
-          .on('end', () => { svgNode.dot = currDot; });
+    await new Promise<void>((resolve) => {
+      gviz
+        .transition(() => transition().duration(0) as any)
+        .renderDot(prevDot)
+        .on('end', resolve);
     });
-  }
+
+    await new Promise<void>((resolve) => {
+      gviz
+        .transition(() => transition().duration(duration).ease(easeCubicInOut) as any)
+        .renderDot(currDot)
+        .on('end', resolve);
+    });
+ }
 
   useEffect(() => {
     const host = hostRef.current;
