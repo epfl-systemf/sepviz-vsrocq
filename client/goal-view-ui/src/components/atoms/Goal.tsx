@@ -21,23 +21,27 @@ const goal : FunctionComponent<GoalProps> = (props) => {
     useEffect(() => {
         const el = ppRef.current;
         if (!el) return;
-        const text = el.textContent ?? '';
-        if (text.trim()) {
-            setGoalText(text);
-            return;
-        }
-        // important: wait for PpDisplay to finish rendering 
-        const observer = new MutationObserver(() => {
-            const text = el.textContent ?? '';
-            if (text.trim()) {
-                setGoalText(text);
-                observer.disconnect();
-            }
-        });
-        observer.observe(el, { childList: true, subtree: true, characterData: true });
-        return () => observer.disconnect();
-    }, [goal, maxDepth]);
 
+        // In order to avoid getting the stale (intermediate) goal text (when jumping through sentences), 
+        // wait for the goal to stop changing, and only start observing after that, 
+        // TODO: is there a better way?
+        const timer = setTimeout(() => {
+            const tryCapture = () => {
+                const text = el.textContent ?? '';
+                if (text.trim()) {
+                    setGoalText(text);
+                    return true;
+                }
+                return false;
+            };
+            if (tryCapture()) return;
+            const observer = new MutationObserver(() => {
+                if (tryCapture()) observer.disconnect();
+            });
+            observer.observe(el, { childList: true, subtree: true, characterData: true });
+        }, 50); 
+       return () => clearTimeout(timer);
+    }, [goal, maxDepth]);
 
     // Note: for the ppRef node, using `display: none` instead will result in missing whitespaces in its textContent.
     return (
