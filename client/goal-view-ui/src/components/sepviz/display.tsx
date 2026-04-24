@@ -55,7 +55,7 @@ const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef,
     } catch (e) {
       console.error('SepvizDisplay: failed to render, falling back to PpDisplay: ', e);
       const pp = ppRef.current;
-      if (pp) {
+      if (pp) { // FIXME
         pp.style.visibility = ''; 
         pp.style.position = ''; 
       } else {

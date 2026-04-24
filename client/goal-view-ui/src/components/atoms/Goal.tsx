@@ -77,21 +77,14 @@ const goal : FunctionComponent<GoalProps> = (props) => {
                     setHelpMessage("");
                 }
             }}
+            style={{ position: 'relative' }}
         >
-            {/* Stack together to hide the PpDisplay (PpDisplay needs to be rendered to have correct indentation.)  */}
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: '100%', top: 0, left: 0 }}>
                 <div ref={ppRef}>
                     <PpDisplay pp={goal} rocqCss={classes} maxDepth={maxDepth} />
                 </div>
-                {goalText && (
-                    <div style={{
-                        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, margin: '-5px', 
-                        background: 'var(--vscode-editor-background)', zIndex: 1,
-                    }}>
-                        <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} />
-                    </div>
-                )}
             </div>
+            <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} />
         </div>
     );
 };
