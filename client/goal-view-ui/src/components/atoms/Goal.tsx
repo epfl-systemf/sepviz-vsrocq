@@ -2,8 +2,8 @@ import React, {FunctionComponent, MouseEvent, KeyboardEvent, useRef, useState, u
 
 import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
-import SepvizDisplay from '../sepviz/display';
-import { Render } from '../sepviz/render';
+import SepvizDisplay from './SepvizDisplay';
+import { Render } from 'sep-viz';
 
 type GoalProps = {
     goal: PpString,

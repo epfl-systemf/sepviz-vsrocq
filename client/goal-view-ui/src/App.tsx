@@ -6,9 +6,8 @@ import {Goal, ProofViewGoals, ProofViewGoalsKey, ProofViewMessage} from './types
 
 import { vscode } from "./utilities/vscode";
 
-import { Render } from './components/sepviz/render';
-import { defaultRenderConfig, readRenderConfig, RenderConfig } from './components/sepviz/config';
-import { isEqual } from 'lodash'; 
+import { Render, defaultRenderConfig, readRenderConfig, RenderConfig } from 'sep-viz';
+import { isEqual } from 'lodash';
 
 const app = () => {
 
@@ -42,7 +41,7 @@ const app = () => {
                         return {...goal, isOpen: true, isContextHidden: index !== 0};
                     }),
                     givenUp: allGoals.givenUpGoals.map((goal: Goal, index: number) => {
-                        return {...goal, isOpen: true, isContextHidden: index !== 0}; 
+                        return {...goal, isOpen: true, isContextHidden: index !== 0};
                     }),
                     unfocused: allGoals.unfocusedGoals.map((goal: Goal, index: number) => {
                         return {...goal, isOpen: false, isContextHidden: index !== 0};
@@ -54,7 +53,7 @@ const app = () => {
             setMessages([]);
             setGoals(null);
             break;
-        case 'sepvizConfigUpdate': 
+        case 'sepvizConfigUpdate':
             try {
                 const newConfig = readRenderConfig(msg.data.text);
                 if (isEqual(sepvizConfig, newConfig)) return;
@@ -69,7 +68,7 @@ const app = () => {
 
     useEffect(() => {
         window.addEventListener("message", handleMessage);
-        vscode.postMessage({ command: 'requestSepvizConfig' }); 
+        vscode.postMessage({ command: 'requestSepvizConfig' });
         return () => {
             window.removeEventListener("message", handleMessage);
         };
@@ -84,7 +83,7 @@ const app = () => {
             return goal;
         });
         setGoals({
-            ...goals!, 
+            ...goals!,
             [key]: newGoals
         });
     };
@@ -97,7 +96,7 @@ const app = () => {
             return goal;
         });
         setGoals({
-            ...goals!, 
+            ...goals!,
             [key]: newGoals
         });
     };
@@ -110,12 +109,12 @@ const app = () => {
 
   return (
     <main>
-        <ProofViewPage 
-            goals={goals} 
-            messages={messages} 
-            collapseGoalHandler={collapseGoalHandler} 
-            displaySetting={goalDisplaySetting} 
-            maxDepth={goalDepth} 
+        <ProofViewPage
+            goals={goals}
+            messages={messages}
+            collapseGoalHandler={collapseGoalHandler}
+            displaySetting={goalDisplaySetting}
+            maxDepth={goalDepth}
             settingsClickHandler={settingsClickHandler}
             helpMessage={helpMessage}
             helpMessageHandler={(message: string) => setHelpMessage(message)}

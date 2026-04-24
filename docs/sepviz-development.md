@@ -26,4 +26,11 @@ Add dependencies:
 ```
 yarn add [package]
 yarn add --dev [package]
-``
+```
+
+## Use the `sep-viz` library
+Locally: in `client/goal-view-ui/packages.json`, add
+```
+"sep-viz": "link:path/to/sep-viz"
+```
+in the dependencies.

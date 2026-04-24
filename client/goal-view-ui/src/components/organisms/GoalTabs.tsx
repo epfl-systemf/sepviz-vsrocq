@@ -9,7 +9,7 @@ import GoalBlock from '../molecules/GoalBlock';
 import { Goal } from '../../types';
 
 import classes from './GoalTabs.module.css';
-import { Render } from '../sepviz/render';
+import { Render } from 'sep-viz';
 
 type GoalSectionProps = {
     goals: Goal[];

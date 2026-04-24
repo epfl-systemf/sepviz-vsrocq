@@ -1,8 +1,8 @@
 import { FunctionComponent, useRef, useEffect, RefObject } from 'react';
-import { Render, ExtHTMLElement } from './render';
+import { Render, ExtHTMLElement } from 'sep-viz';
 import { transition } from 'd3-transition';
 import { easeCubicInOut } from 'd3-ease';
-import "./sep.css";
+import "sep-viz/sep-viz.css";
 
 interface SepvizDisplayProps {
   goalText: string;

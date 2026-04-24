@@ -6,7 +6,7 @@ import Separator from '../atoms/Separator';
 
 import classes from './GoalBlock.module.css';
 import { Goal } from '../../types';
-import { Render } from '../sepviz/render';
+import { Render } from 'sep-viz';
 
 type GoalBlockProps = {
     goal: Goal

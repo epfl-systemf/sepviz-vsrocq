@@ -4,7 +4,7 @@ import CollapsibleGoalBlock from '../molecules/CollapsibleGoalBlock';
 import { CollapsibleGoal } from '../../types';
 
 import classes from './GoalCollapsibles.module.css';
-import { Render } from '../sepviz/render';
+import { Render } from 'sep-viz';
 
 type GoalSectionProps = {
     goals: CollapsibleGoal[],

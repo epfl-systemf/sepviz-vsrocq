@@ -19,7 +19,7 @@ import { ProofViewGoals, ProofViewGoalsKey, ProofViewMessage } from '../../types
 import classes from './GoalPage.module.css';
 import { VscPass, VscWarning } from 'react-icons/vsc';
 
-import { Render } from '../sepviz/render';
+import { Render } from 'sep-viz';
 
 type ProofViewPageProps = {
     goals: ProofViewGoals;
