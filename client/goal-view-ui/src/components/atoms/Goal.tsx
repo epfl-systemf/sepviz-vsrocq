@@ -37,6 +37,9 @@ const goal : FunctionComponent<GoalProps> = (props) => {
     const {goal, maxDepth, setHelpMessage, sepvizRender} = props;
     const ppRef = useRef<HTMLDivElement>(null);
     const [goalText, setGoalText] = useState<string>('');
+    const [fallbackActive, setFallbackActive] = useState(false);
+
+    useEffect(() => { setFallbackActive(false); }, [goal, maxDepth]);
 
     useEffect(() => {
         const el = ppRef.current;
@@ -79,12 +82,15 @@ const goal : FunctionComponent<GoalProps> = (props) => {
             }}
             style={{ position: 'relative' }}
         >
+            {/* hidden PpDisplay for goalText extraction */}
             <div style={{ position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: '100%', top: 0, left: 0 }}>
                 <div ref={ppRef}>
                     <PpDisplay pp={goal} rocqCss={classes} maxDepth={maxDepth} />
                 </div>
             </div>
-            <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} />
+            { fallbackActive 
+                ? ( <PpDisplay pp={goal} rocqCss={classes} maxDepth={maxDepth} />) 
+                : ( <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} onFallback={() => setFallbackActive(true)} />) }
         </div>
     );
 };

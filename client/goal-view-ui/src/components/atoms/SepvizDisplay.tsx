@@ -8,9 +8,11 @@ interface SepvizDisplayProps {
   goalText: string;
   ppRef: RefObject<HTMLDivElement>;
   render: Render;
+  onFallback: () => void;
 }
 
-const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef, render }) => {
+const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = (props) => {
+  const {goalText, ppRef, render, onFallback} = props;
   const hostRef = useRef<HTMLDivElement>(null);
   const prevDotRef = useRef<string>(''); 
 
@@ -54,15 +56,9 @@ const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = ({ goalText, ppRef,
       if (currDot) prevDotRef.current = currDot;
     } catch (e) {
       console.error('SepvizDisplay: failed to render, falling back to PpDisplay: ', e);
-      const pp = ppRef.current;
-      if (pp) { // FIXME
-        pp.style.visibility = ''; 
-        pp.style.position = ''; 
-      } else {
-        host.textContent = goalText; 
-      }
+      onFallback();
     }
-  }, [goalText, ppRef, render]);
+  }, [goalText, ppRef, render, onFallback]);
 
   return <div ref={hostRef} className="sepviz-display" />;
 };
