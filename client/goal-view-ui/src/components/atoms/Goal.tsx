@@ -4,6 +4,7 @@ import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
 import SepvizDisplay from './SepvizDisplay';
 import { Render } from 'sep-viz';
+import { domToText } from './Utilities';
 
 type GoalProps = {
     goal: PpString,
@@ -11,26 +12,6 @@ type GoalProps = {
     setHelpMessage: (message: string) => void;
     sepvizRender: Render;
 };
-
-function domToText(el: HTMLElement, charWidthPx: number = 7): string {
-    let res = '';
-    function rec(node: Node) {
-        if (node.nodeType === Node.TEXT_NODE) { res += node.textContent; return; }
-        if (node.nodeType !== Node.ELEMENT_NODE) return;
-        const elem = node as HTMLElement;
-        if (elem.tagName === 'BR') { res += '\n'; return;}
-        // indentation span
-        if (elem.tagName === 'SPAN' && elem.style.marginLeft) {
-            const px = parseFloat(elem.style.marginLeft);
-            const spaces = Math.round(px / charWidthPx);
-            res += ' '.repeat(spaces);
-            return; 
-        }
-        elem.childNodes.forEach(rec);
-    }
-    el.childNodes.forEach(rec);
-    return res;
-}
 
 const goal : FunctionComponent<GoalProps> = (props) => {
     
@@ -52,10 +33,7 @@ const goal : FunctionComponent<GoalProps> = (props) => {
             const tryCapture = () => {
                 // Note: innerText is not enough because it ignores indentation spans.
                 const text = domToText(el); 
-                if (text.trim()) {
-                    setGoalText(text);
-                    return true;
-                }
+                if (text.trim()) { setGoalText(text); return true; }
                 return false;
             };
             if (tryCapture()) return;
@@ -82,7 +60,7 @@ const goal : FunctionComponent<GoalProps> = (props) => {
             }}
             style={{ position: 'relative' }}
         >
-            {/* hidden PpDisplay for goalText extraction */}
+             {/* hidden PpDisplay for goalText extraction */}
             <div style={{ position: 'absolute', visibility: 'hidden', pointerEvents: 'none', width: '100%', top: 0, left: 0 }}>
                 <div ref={ppRef}>
                     <PpDisplay pp={goal} rocqCss={classes} maxDepth={maxDepth} />
@@ -90,7 +68,13 @@ const goal : FunctionComponent<GoalProps> = (props) => {
             </div>
             { fallbackActive 
                 ? ( <PpDisplay pp={goal} rocqCss={classes} maxDepth={maxDepth} />) 
-                : ( <SepvizDisplay goalText={goalText} ppRef={ppRef} render={sepvizRender} onFallback={() => setFallbackActive(true)} />) }
+                : ( <SepvizDisplay 
+                        goalText={goalText} 
+                        ppRef={ppRef} 
+                        render={sepvizRender} 
+                        onFallback={() => setFallbackActive(true)}
+                        animate={true}
+                    />) }
         </div>
     );
 };

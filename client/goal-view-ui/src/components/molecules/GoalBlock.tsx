@@ -21,7 +21,7 @@ const goalBlock: FunctionComponent<GoalBlockProps> = (props) => {
     
     const {goal, goalIndicator, maxDepth, displayHyps, helpMessageHandler, sepvizRender} = props;
     const indicator = goalIndicator ? <span className={classes.GoalIndex} >({goalIndicator})</span> : null;
-    const hyps = displayHyps ? <HypothesesBlock hypotheses={goal.hypotheses} maxDepth={maxDepth}/> : null;
+    const hyps = displayHyps ? <HypothesesBlock hypotheses={goal.hypotheses} maxDepth={maxDepth} sepvizRender={sepvizRender}/> : null;
 
     return (
         <div className={classes.Block}>

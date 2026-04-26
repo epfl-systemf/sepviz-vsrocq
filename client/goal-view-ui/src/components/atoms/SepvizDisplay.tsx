@@ -9,10 +9,11 @@ interface SepvizDisplayProps {
   ppRef: RefObject<HTMLDivElement>;
   render: Render;
   onFallback: () => void;
+  animate: boolean
 }
 
 const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = (props) => {
-  const {goalText, ppRef, render, onFallback} = props;
+  const {goalText, ppRef, render, onFallback, animate} = props;
   const hostRef = useRef<HTMLDivElement>(null);
   const prevDotsRef = useRef<Map<string, string | undefined>>(new Map());
 
@@ -22,13 +23,14 @@ const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = (props) => {
     host.innerHTML = '';
 
     try {
-      render.render(goalText, host, true);
+      render.render(goalText, host, animate);
     } catch (e) {
       console.error('SepvizDisplay: failed to render, falling back to PpDisplay: ', e);
       onFallback();
       return;
     }
 
+    if(!animate) return;
     ['PRE', 'POST'].forEach((stream) => {
       const vizNode = host.querySelector(`.sep-visualization.sep-stream-${stream}`); 
       const svgNode = vizNode?.querySelector<ExtHTMLElement>('.sep-svg');
