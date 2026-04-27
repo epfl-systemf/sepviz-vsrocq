@@ -3,7 +3,7 @@ import React, {FunctionComponent, MouseEvent, KeyboardEvent, useRef, useState, u
 import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
 import SepvizDisplay from './SepvizDisplay';
-import { Render } from 'sep-viz';
+import { Render } from 'sepviz';
 import { domToText } from './Utilities';
 
 type GoalProps = {

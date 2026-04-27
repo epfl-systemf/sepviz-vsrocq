@@ -4,7 +4,7 @@ import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
 import { domToText } from './Utilities';
 import SepvizDisplay from './SepvizDisplay';
-import { Render } from 'sep-viz';
+import { Render } from 'sepviz';
 
 type HypothesisProps = {
     content: PpString;

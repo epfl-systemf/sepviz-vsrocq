@@ -5,7 +5,7 @@ import { VscEye, VscEyeClosed } from 'react-icons/vsc';
 import GoalBlock from './GoalBlock';
 import Accordion from '../atoms/Accordion';
 import { CollapsibleGoal } from '../../types';
-import { Render } from 'sep-viz';
+import { Render } from 'sepviz';
 
 type CollapsibleGoalBlockProps = {
     goal: CollapsibleGoal,

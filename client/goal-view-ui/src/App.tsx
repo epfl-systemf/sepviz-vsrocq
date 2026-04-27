@@ -6,7 +6,7 @@ import {Goal, ProofViewGoals, ProofViewGoalsKey, ProofViewMessage} from './types
 
 import { vscode } from "./utilities/vscode";
 
-import { Render, defaultRenderConfig, readRenderConfig, RenderConfig } from 'sep-viz';
+import { Render, defaultRenderConfig, readRenderConfig, RenderConfig } from 'sepviz';
 import { isEqual } from 'lodash';
 
 const app = () => {

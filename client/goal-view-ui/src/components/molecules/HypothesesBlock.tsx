@@ -5,7 +5,7 @@ import { PpString } from 'pp-display';
 import Hypothesis from '../atoms/Hypothesis';
 
 import classes from './HypothesesBlock.module.css';
-import { Render } from 'sep-viz';
+import { Render } from 'sepviz';
 
 type HypothesesBlockProps = {
     hypotheses: PpString[];

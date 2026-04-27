@@ -6,7 +6,7 @@ import EmptyState from '../atoms/EmptyState';
 import { CollapsibleGoal } from '../../types';
 
 import classes from './GoalSection.module.css';
-import { Render } from 'sep-viz';
+import { Render } from 'sepviz';
 
 type GoalSectionProps = {
     goals: CollapsibleGoal[],
