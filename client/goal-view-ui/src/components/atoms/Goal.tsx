@@ -1,4 +1,4 @@
-import React, {FunctionComponent, MouseEvent, KeyboardEvent, useRef, useState, useEffect} from 'react';
+import React, {FunctionComponent, MouseEvent, KeyboardEvent, useRef, useState, useEffect, useCallback} from 'react';
 
 import classes from './PpString.module.css';
 import { PpDisplay, PpString } from 'pp-display';
@@ -20,7 +20,9 @@ const goal : FunctionComponent<GoalProps> = (props) => {
     const [goalText, setGoalText] = useState<string>('');
     const [fallbackActive, setFallbackActive] = useState(false);
 
-    useEffect(() => { setFallbackActive(false); }, [goal, maxDepth]);
+    const handleFallback = useCallback(() => {
+        setFallbackActive(true);
+    }, []);
 
     useEffect(() => {
         const el = ppRef.current;
@@ -72,7 +74,7 @@ const goal : FunctionComponent<GoalProps> = (props) => {
                         goalText={goalText} 
                         ppRef={ppRef} 
                         render={sepvizRender} 
-                        onFallback={() => setFallbackActive(true)}
+                        onFallback={handleFallback}
                         animate={true}
                     />) }
         </div>
