@@ -299,6 +299,7 @@ export default class GoalPanel {
     }
     try {
         const text = fs.readFileSync(configPath, 'utf-8');
+        if(text.trim().length === 0) return;
         webview.postMessage({ command: 'sepvizConfigUpdate', text });
         Client.writeToVsrocqChannel(`[GoalPanel] Sent ${this._sepvizConfigFName} to webview`);
     } catch (e) {
@@ -310,7 +311,6 @@ export default class GoalPanel {
     const configPath = this._getSepvizConfigPath();
     if (!configPath) return;
     this._sepvizConfigWatcher = fs.watch(configPath, () => {
-        Client.writeToVsrocqChannel(`[GoalPanel] ${this._sepvizConfigFName} changed, reloading`);
         this._sendSepvizConfig(webview);
     });
   }

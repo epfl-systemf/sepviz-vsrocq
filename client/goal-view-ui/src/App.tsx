@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect} from 'react';
+import React, {useState, useCallback, useEffect, useRef} from 'react';
 import "./App.css";
 
 import ProofViewPage from './components/templates/ProofViewPage';
@@ -16,8 +16,8 @@ const app = () => {
   const [goalDisplaySetting, setGoalDisplaySetting] = useState<string>("List");
   const [goalDepth, setGoalDepth] = useState<number>(10);
   const [helpMessage, setHelpMessage] = useState<string>("");
-  const [sepvizConfig, setSepvizConfig] = useState<RenderConfig>(defaultRenderConfig);
   const [sepvizRender, setSepvizRender] = useState<Render>(() => new Render(defaultRenderConfig()));
+  const sepvizConfigRef = useRef<RenderConfig>(defaultRenderConfig());
 
   const handleMessage = useCallback ((msg: any) => {
     switch (msg.data.command) {
@@ -56,8 +56,8 @@ const app = () => {
         case 'sepvizConfigUpdate':
             try {
                 const newConfig = readRenderConfig(msg.data.text);
-                if (isEqual(sepvizConfig, newConfig)) return;
-                setSepvizConfig(newConfig);
+                if (isEqual(sepvizConfigRef.current, newConfig)) return;
+                sepvizConfigRef.current = newConfig;
                 setSepvizRender(new Render(newConfig));
             } catch (e) {
                 console.error('sepviz: failed to parse config and setup new render ', e);
