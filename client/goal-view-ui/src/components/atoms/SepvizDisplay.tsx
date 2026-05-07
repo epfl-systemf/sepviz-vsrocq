@@ -11,7 +11,7 @@ interface SepvizDisplayProps {
 }
 
 const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = (props) => {
-  const {goalText, ppRef, render, onFallback, animate} = props;
+  const {goalText, render, onFallback, animate} = props;
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const SepvizDisplay: FunctionComponent<SepvizDisplayProps> = (props) => {
       return;
     }
     if(animate) render.animate(host);
-  }, [goalText, ppRef, render, onFallback]);
+  }, [goalText, render, onFallback]);
 
   return <div ref={hostRef} className="sepviz-display" />;
 };
